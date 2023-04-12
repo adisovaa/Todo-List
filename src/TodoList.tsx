@@ -4,16 +4,20 @@ export type TodoListPropsType = {
     tasks: Array<TaskType>
     truckName: string
     truck2?: string | number
-    removeTask: (taskId: number) => void
+    removeTask: (taskId: string) => void
+    addTask: (newTitle: string) => void
 }
 
 type TaskType = {
-    id: number
+    id: string
     title: string
     isDone: boolean
 }
+
 export const TodoList = (props: TodoListPropsType) => {
     let [filterValue, setFilterValue] = useState('All')
+    const[newTitle, setNewTitle] = useState('')
+
     const filterTask = (buttonName: string) => {
         setFilterValue(buttonName)
     }
@@ -29,15 +33,19 @@ export const TodoList = (props: TodoListPropsType) => {
         filteredTasks = props.tasks
     }
 
+    // const onChangeInputHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    //     setNewTitle(e.currentTarget.value)
+    // }
+
     return (
         <div>
             <h3>{props.truckName}</h3>
             <div>
-                <input/>
-                <button>+</button>
+                <input type='text' value={newTitle} onChange={(e) => setNewTitle(e.currentTarget.value)}/>
+                <button onClick={() => props.addTask(newTitle)}>+</button>
             </div>
             <ul>
-                {filteredTasks.map((el, i) => {
+                {filteredTasks.map((el) => {
                     return (
                         <li key={el.id}>
                             <button onClick={(e) => props.removeTask(el.id)}>x</button>
