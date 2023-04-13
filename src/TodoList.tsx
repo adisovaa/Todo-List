@@ -1,12 +1,13 @@
 import React, {ChangeEvent, useState} from 'react';
 import {Button} from "./components/Button";
+import {FilterValuesType} from "./App";
 
-export type TodoListPropsType = {
+export type PropsType = {
     tasks: Array<TaskType>
-    truckName: string
-    truck2?: string | number
+    title: string
     removeTask: (taskId: string) => void
     addTask: (newTitle: string) => void
+    changeFilter: (value: string) => void
 }
 
 type TaskType = {
@@ -15,24 +16,10 @@ type TaskType = {
     isDone: boolean
 }
 
-export const TodoList = (props: TodoListPropsType) => {
-    let [filterValue, setFilterValue] = useState('All')
+
+export const TodoList = (props: PropsType) => {
+
     const [newTitle, setNewTitle] = useState('')
-
-    const filterTask = (buttonName: string) => {
-        setFilterValue(buttonName)
-    }
-
-    let filteredTasks = props.tasks
-    if (filterValue === 'Active') {
-        filteredTasks = props.tasks.filter(el => !el.isDone)
-    }
-    if (filterValue === 'Complete') {
-        filteredTasks = props.tasks.filter(el => el.isDone)
-    }
-    if (filterValue === 'All') {
-        filteredTasks = props.tasks
-    }
 
     const addTaskHandler = () => {
         props.addTask(newTitle)
@@ -50,40 +37,28 @@ export const TodoList = (props: TodoListPropsType) => {
         setNewTitle(event.currentTarget.value)
     }
 
-    const removeTaskHandler = (el:string) => {
+    const removeTaskHandler = (el: string) => {
         props.removeTask(el)
     }
 
-    // const AllChangeFilterHandler = () => {
-    //     filterTask('all')
-    // }
-    //
-    // const ActiveChangeFilterHandler = () => {
-    //     filterTask('Active')
-    // }
-    //
-    // const CompleteChangeFilterHandler = () => {
-    //     filterTask('Complete')
-    // }
-
-
-    const filterFunction = (filterValue: string) => {
-        filterTask(filterValue)
+    const filterFunction = (filterValue: FilterValuesType) => {
+        props.changeFilter(filterValue)
     }
 
     return (
         <div>
-            <h3>{props.truckName}</h3>
+            <h3>{props.title}</h3>
             <div>
-                <input onKeyPress={onKeyPressHandler}
-                       type='text'
-                       value={newTitle}
-                       onChange={onChangeHandler}
-                />
-                <button onClick={addTaskHandler}>+</button>
+                <input
+                    onKeyPress={onKeyPressHandler}
+                    type='text'
+                    value={newTitle}
+                    onChange={onChangeHandler}/>
+
+                <Button name={'+'} callBack={addTaskHandler}/>
             </div>
             <ul>
-                {filteredTasks.map((el) => {
+                {props.tasks.map((el) => {
                     // const removeTaskHandler = () => {
                     //     props.removeTask(el.id)
                     // }
@@ -97,13 +72,9 @@ export const TodoList = (props: TodoListPropsType) => {
                 })}
             </ul>
             <div>
-                <Button name={'All'} callBack={() => filterFunction('All')}/>
-                <Button name={'Active'} callBack={() => filterFunction('Active')}/>
-                <Button name={'Complete'} callBack={() => filterFunction('Complete')}/>
-
-                {/*<button onClick={() => filterFunction('All')}>All</button>*/}
-                {/*<button onClick={() => filterFunction('Active')}>Active</button>*/}
-                {/*<button onClick={() => filterFunction('Complete')}>Complete</button>*/}
+                <Button name={'All'} callBack={() => filterFunction('all')}/>
+                <Button name={'Active'} callBack={() => filterFunction('active')}/>
+                <Button name={'Complete'} callBack={() => filterFunction('completed')}/>
             </div>
         </div>
     )
